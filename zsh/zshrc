@@ -1,0 +1,336 @@
+# OPENSPEC:START
+# OpenSpec shell completions configuration
+fpath=("$HOME/.oh-my-zsh/custom/completions" $fpath)
+autoload -Uz compinit
+compinit
+# OPENSPEC:END
+
+# ===== 编码设置（放在文件最前面） =====
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+
+# ===== PATH 设置 =====
+export PATH="$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH"
+export PATH="$HOME/.volta/bin:$PATH"
+export PATH="$(go env GOPATH)/bin:$PATH"
+export PATH="$HOME/.codeium/windsurf/bin:$PATH"
+export PATH="$HOME/.lmstudio/bin:$PATH"
+
+# ===== Oh My Zsh 配置 =====
+export ZSH="$HOME/.oh-my-zsh"
+export ZSH_CUSTOM="$HOME/.oh-my-zsh/custom"
+
+# 主题配置
+# 可选主题（取消注释切换）：
+# ZSH_THEME="robbyrussell"    # 默认主题
+# ZSH_THEME="agnoster"        # 带路径和 Git 状态
+ZSH_THEME="powerlevel10k/powerlevel10k"  # Powerlevel10k（推荐）
+
+# 插件配置（Oh My Zsh 内置插件）
+plugins=(
+	git
+	zsh-z                    # 智能目录跳转
+	zsh-completions          # 额外的补全
+	fast-syntax-highlighting # 更快的语法高亮
+	colored-man-pages        # 彩色 man 手册
+	sudo                     # 双击 esc 在命令前加 sudo
+	web-search               # 命令行搜索
+	history                  # 历史命令别名
+	extract                  # 智能解压
+	copypath                 # 复制当前路径
+	copyfile                 # 复制文件内容
+	dirhistory               # 目录历史
+)
+
+
+source $ZSH/oh-my-zsh.sh
+
+# ===== 别名 =====
+alias cls="clear"
+alias ca="cursor-agent"
+alias cursor="/Applications/Cursor.app/Contents/MacOS/Cursor"
+alias gpp="git pull -p"
+alias cc="claude"
+alias cdp="claude --dangerously-skip-permissions"
+alias hc="happy --dangerously-skip-permissions"
+
+# 命令增强工具别名（更现代的替代）
+alias ls='eza --color=always --group-directories-first'    # 彩色 ls
+alias ll='eza -la --color=always --group-directories-first' # 详细列表
+alias lt='eza --tree --color=always'                        # 目录树
+alias cat='bat --paging=never'                              # 彩色 cat
+alias find='fd'                                             # 更快的 find
+alias grep='rg'                                             # 更快的 grep
+alias du='duf'                                              # 更好的磁盘使用
+alias top='btop' 2>/dev/null || top                         # 更好的 top
+
+# Git 别名增强
+alias gs='git status'
+alias ga='git add'
+alias gc='git commit'
+alias gp='git push'
+alias gl='git log --oneline --graph --decorate'
+alias gd='git diff'
+
+# ===== 敏感信息（从 ~/.zshrc.local 加载） =====
+# 将 API keys、密码等放入 ~/.zshrc.local
+[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
+
+# zsh 插件（通过 brew 安装的）
+source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+# source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh # 已用 fast-syntax-highlighting 替代
+
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=($HOME/.docker/completions $fpath)
+autoload -Uz compinit
+compinit
+# End of Docker CLI completions
+
+# Added by Antigravity
+export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
+
+
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+
+# pnpm
+export PNPM_HOME="$HOME/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+
+# OpenClaw Completion
+source "$HOME/.openclaw/completions/openclaw.zsh"
+POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# ===== 命令行增强工具配置 =====
+
+# fzf 配置（更快的模糊搜索）
+export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border --preview "bat --color=always {}"'
+export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+
+# 重新绑定快捷键：fzf 文件搜索改用 Ctrl+F，Ctrl+T 恢复字符转置
+bindkey '^F' fzf-file-widget
+bindkey '^T' transpose-chars
+
+# bat（更强大的 cat）配置
+export BAT_THEME="Dracula"
+export BAT_STYLE="plain"
+
+# eza（更强大的 ls）配置
+export EZA_COLORS="di=1;34:ln=1;36:ex=1;32:gi=1;33"
+
+# ripgrep（更强大的 grep）配置
+export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc" 2>/dev/null || true
+
+# ===== 历史命令优化 =====
+export HISTSIZE=1000000
+export HISTFILESIZE=1000000
+export HISTCONTROL=ignoredups:erasedups
+setopt SHARE_HISTORY          # 共享历史
+setopt HIST_IGNORE_DUPS       # 忽略重复
+setopt HIST_IGNORE_SPACE      # 忽略以空格开头的命令
+setopt INC_APPEND_HISTORY     # 立即写入历史
+
+# ===== 目录跳转优化 =====
+setopt AUTO_CD                # 输入目录名自动 cd
+setopt AUTO_PUSHD             # cd 自动 pushd
+setopt PUSHD_IGNORE_DUPS      # 忽略重复的 pushd
+
+# ===== 补全优化 =====
+zstyle ':completion:*' menu select                    # 菜单选择
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS} # 彩色补全
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'   # 大小写不敏感
+zstyle ':completion:*' verbose yes                    # 详细补全信息
+zstyle ':completion:*' use-cache on                   # 使用缓存
+zstyle ':completion:*' cache-path ~/.zsh/cache        # 缓存路径
+
+# ===== iTerm2 优化配置 =====
+
+# 快捷别名增强
+alias fz='fzf'                           # 模糊搜索
+alias lg='lazygit'                       # Git TUI
+alias t='tmux'                           # 终端复用器
+alias ta='tmux attach -t'                # 连接到会话
+alias tl='tmux ls'                       # 列出会话
+alias tn='tmux new -s'                   # 新建会话
+
+# 文件操作快捷键
+alias cp='cp -i'                         # 复制前确认
+alias mv='mv -i'                         # 移动前确认
+alias rm='rm -i'                         # 删除前确认
+alias mkdir='mkdir -p'                   # 自动创建父目录
+
+# 网络工具
+alias ip='curl -s ipinfo.io/ip'          # 获取公网 IP
+alias ports='netstat -tulanp'            # 查看端口
+alias ping='ping -c 5'                   # ping 5 次
+
+# 系统工具
+alias now='date +"%Y-%m-%d %H:%M:%S"'     # 当前时间
+alias path='echo $PATH | tr -s ":" "\n"' # 查看路径
+alias reload='source ~/.zshrc'           # 重新加载配置
+
+# 快速跳转到常用目录
+alias dev='cd ~/Developer 2>/dev/null || cd ~/dev'
+alias proj='cd ~/projects 2>/dev/null || cd ~/proj'
+alias dl='cd ~/Downloads'
+alias dt='cd ~/Desktop'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+
+# ===== iTerm2 Shell 集成增强 =====
+
+# 从剪贴板粘贴图片，保存到临时文件并输出路径
+paste-image() {
+    local tmpfile="/tmp/clipboard_image.png"
+    if pngpaste "$tmpfile" 2>/dev/null; then
+        echo "✅ $tmpfile"
+        echo "$tmpfile" | pbcopy  # 复制路径到剪贴板
+        imgcat "$tmpfile" 2>/dev/null  # 在终端显示图片
+        echo "📋 路径已复制，Cmd+V 粘贴到对话框"
+    else
+        echo "❌ 剪贴板中没有图片" >&2
+        return 1
+    fi
+}
+
+# 快速创建新标签页/窗口
+newtab() {
+    local cmd="$*"
+    osascript >/dev/null <<EOF
+tell application "iTerm"
+    tell current window
+        create tab with default profile
+        tell current session
+            write text "${cmd:-$PWD}"
+        end tell
+    end tell
+end tell
+EOF
+}
+
+newwin() {
+    local cmd="$*"
+    osascript >/dev/null <<EOF
+tell application "iTerm"
+    create window with default profile
+    tell current session
+        write text "${cmd:-$PWD}"
+    end tell
+end tell
+EOF
+}
+
+# ===== 开发工具快捷函数 =====
+
+# 快速查找并打开文件
+fe() {
+    local files
+    IFS=$'\n' files=($(fzf-tmux --query="$1" --multi --select-1 --exit-0))
+    [[ -n "$files" ]] && ${EDITOR:-vim} "${files[@]}"
+}
+
+# 快速切换目录
+fd() {
+    local dir
+    dir=$(find ${1:-.} -path '*/\.*' -prune -o -type d -print 2>/dev/null | fzf +m) && cd "$dir"
+}
+
+# 使用 rg 搜索并预览
+fzf_search() {
+    rg --color=always --line-number --no-heading "$@" |
+      fzf --ansi \
+          --color "hl:-1:underline,hl+:-1:underline:reverse" \
+          --delimiter : \
+          --preview 'bat --color=always {1} --highlight-line {2}' \
+          --preview-window 'up,60%,border-bottom,+{2}+3/3,~3' \
+          --bind 'enter:become(vim {1} +{2})'
+}
+
+# Git 增强功能
+git_show() {
+    git log --graph --color=always \
+        --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" "$@" |
+    fzf --ansi --no-sort --reverse --tiebreak=index \
+        --bind 'ctrl-s:toggle-sort,ctrl-m:execute:
+                echo "{}" | grep -o "[a-f0-9]\{7,\}" |
+                xargs -I % sh -c "git show --color=always % | less -R"'
+}
+
+# ===== 性能优化 =====
+
+# 延迟加载 nvm（如果安装）
+export NVM_LAZY_LOAD=true
+lazy_load_nvm() {
+    unset -f nvm node npm
+    export NVM_DIR="$HOME/.nvm"
+    [[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
+}
+
+# 检查并延迟加载大型工具
+if command -v brew >/dev/null 2>&1; then
+    # zvm_after_init() {
+    #     lazy_load_nvm
+    # }
+fi
+
+# ===== 终端启动优化 =====
+# 显示欢迎信息（仅在新终端时）
+if [[ $SHLVL -eq 1 ]]; then
+    # 可选：显示系统信息
+    # neofetch 2>/dev/null || fastfetch 2>/dev/null
+
+    # 自动全屏（首次启动时）
+    # if [[ "$TERM_PROGRAM" == "iTerm.app" ]]; then
+    #     osascript -e 'tell application "System Events" to keystroke "f" using {command down, control down}'
+    # fi
+fi
+
+export PATH="$HOME/Library/Python/3.9/bin:$PATH"
+
+# GNU grep
+export PATH="/opt/homebrew/opt/grep/libexec/gnubin:$PATH"
+
+# 快捷命令：粘贴剪贴板图片到终端
+alias pi='paste-image'
+
+# Spark ship 部署命令
+alias ship='npx --registry https://ued.zuoyebang.cc -y @spark/run@latest ship '
+
+# Claude Code 专用：保存剪贴板图片，输出路径供 CC 读取
+cc-img() {
+    local imgfile="/tmp/cc_screenshot.png"
+    if pngpaste "$imgfile" 2>/dev/null; then
+        echo "✅ 图片已保存，发送以下内容给 Claude："
+        echo ""
+        echo "请查看 $imgfile"
+        echo ""
+        # 自动复制到剪贴板
+        echo "请查看 $imgfile" | pbcopy
+        echo "📋 路径已复制到剪贴板，直接 Cmd+V 粘贴即可"
+    else
+        echo "❌ 剪贴板中没有图片" >&2
+        return 1
+    fi
+}
+alias ccc="pngpaste /tmp/cc_screenshot.png && echo 请查看 /tmp/cc_screenshot.png"
+
+# 保存图片到桌面，方便拖拽到 Claude Code
+cc-drag() {
+    local imgfile="$HOME/Desktop/CC_Images/screenshot.png"
+    if pngpaste "$imgfile" 2>/dev/null; then
+        echo "✅ 图片已保存到: $imgfile"
+        echo "📍 打开 Finder 拖拽到对话框"
+        open -R "$imgfile"
+    else
+        echo "❌ 剪贴板中没有图片" >&2
+        return 1
+    fi
+}
